@@ -6,11 +6,17 @@ type ViewT = 'Weekly' | 'Monthly' | 'Quarterly'
 
 interface DisplayTablePageProps {
     loading: boolean
-    data: { kind: string; transactions: TransactionT[] }[]
+    transactions: TransactionT[]
+    types: { [k: string]: { [k: string]: boolean } }
     flipTableSign?: boolean
 }
 
-export const DisplayTablePage: React.FC<DisplayTablePageProps> = ({ loading, data, flipTableSign = false }) => {
+export const DisplayTablePage: React.FC<DisplayTablePageProps> = ({
+    loading,
+    transactions,
+    types,
+    flipTableSign = false,
+}) => {
     const [view, setView] = useLocalStorage<ViewT>('view', 'Monthly')
     const [date, setDate] = useLocalStorage('date', yearsItems().at(-1) || { label: '<error>', value: '<error>' })
 
@@ -56,18 +62,19 @@ export const DisplayTablePage: React.FC<DisplayTablePageProps> = ({ loading, dat
 
             <div className='flex flex-col gap-10'>
                 {!loading &&
-                    Object.keys(data).map(kind => (
-                        <Card key={kind}>
+                    Object.keys(types).map(type => (
+                        <Card key={type}>
                             <Table
-                                title={kind}
+                                title={type}
                                 headers={
                                     view === 'Monthly' && date.label.includes('FY')
                                         ? [...headers[view].slice(6, 12), ...headers[view].slice(0, 6), 'Total']
                                         : headers[view]
                                 }
-                                rows={formatRows(view, JSON.parse(date.value), data[kind])}
+                                rowHeaders={Object.keys(types[type])}
+                                rows={formatRows(view, JSON.parse(date.value), transactions, type, types[type])}
                                 tooltips
-                                onClickToolTip={(ev, values) => {
+                                onClickToolTip={(_, values) => {
                                     setSelected(values)
                                     setModalOpen(true)
                                 }}
@@ -112,14 +119,6 @@ const monthsItems = (): OptionItem[] => {
     })
     return items
 }
-const CONCAT_YEARS = [
-    ...YEARS.map(y =>
-        MONTHS.map((m, mi) => ({
-            label: `${m} ${y}`,
-            value: JSON.stringify({ m: mi, y: y }),
-        }))
-    ),
-]
 
 const headers: Record<ViewT, string[]> = {
     Weekly: ['W1', 'W2', 'W3', 'W4', 'Total'],
@@ -128,15 +127,17 @@ const headers: Record<ViewT, string[]> = {
 }
 const viewCols = { Weekly: 4, Quarterly: 4, Monthly: 12 }
 
-const formatRow = (view: ViewT, s, transactions: number[]) => {
-    let start = new Date(s.y, s.m)
+const formatRow = (view: ViewT, s: { y: string; m: string }, transactions: TransactionT[]) => {
+    const year = parseInt(s.y)
+    const month = parseInt(s.m)
+    let start = new Date(year, month)
     let end: Date
     let cols = []
     for (let i = 0; i < viewCols[view]; i++) {
-        end = new Date(s.y, s.m, 8 + 7 * i)
-        if (view === 'Weekly' && i == 3) end = new Date(s.y, s.m + 1)
-        if (view === 'Monthly') end = new Date(s.y, s.m + i + 1)
-        if (view === 'Quarterly') end = new Date(s.y, s.m + 3 + i * 3)
+        end = new Date(year, month, 8 + 7 * i)
+        if (view === 'Weekly' && i == 3) end = new Date(year, month + 1)
+        if (view === 'Monthly') end = new Date(year, month + i + 1)
+        if (view === 'Quarterly') end = new Date(year, month + 3 + i * 3)
         cols.push(
             transactions.filter(t => {
                 const date = new Date(`${t.date}T12:00`)
@@ -148,11 +149,19 @@ const formatRow = (view: ViewT, s, transactions: number[]) => {
     cols.push(
         transactions.filter(t => {
             const date = new Date(`${t.date}T12:00`)
-            return new Date(s.y, s.m) <= date && date < end
+            return new Date(year, month) <= date && date < end
         })
     )
     return cols
 }
 
-const formatRows = (view: ViewT, start, items: TransactionT[]) =>
-    Object.keys(items).map(item => formatRow(view, start, items[item]))
+const formatRows = (
+    view: ViewT,
+    start: { y: string; m: string },
+    transactions: TransactionT[],
+    type: string,
+    items: { [k: string]: boolean }
+) => Object.keys(items).map(item => formatRow(view, start, filterTransactions(transactions, type, item)))
+
+const filterTransactions = (transactions: TransactionT[], type: string, item: string) =>
+    transactions.filter(transaction => transaction.type === type && transaction.item === item)

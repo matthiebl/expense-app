@@ -25,8 +25,8 @@ export const Button: React.FC<ButtonProps> = ({
     const navigate = useNavigate()
 
     const clickAction = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (onClick) onClick(ev)
-        else if (link) navigate(link)
+        if (link) navigate(link)
+        else if (onClick) onClick(ev)
     }
 
     return (
