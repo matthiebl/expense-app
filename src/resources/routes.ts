@@ -24,10 +24,10 @@ export const Router = {
         linktext: 'Expenses',
     },
     invest: {
-        path: '/table/future',
+        path: '/table/invest',
         info: 'investments table',
-        text: 'Future',
-        linktext: 'Future',
+        text: 'Investments',
+        linktext: 'Investments',
     },
     add: {
         path: '/new-data',
