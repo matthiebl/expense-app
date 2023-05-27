@@ -26,14 +26,14 @@ export const Select: React.FC<SelectProps> = ({
     className = '',
     required = true,
 }) => (
-    <div className='flex gap-2'>
+    <div className='flex items-center gap-2'>
         {label && <label htmlFor={id}>{label}</label>}
 
         <select
             id={id}
             value={selected.value}
             onChange={onChange}
-            className={'bg-transparent outline-0 ' + (selected.value === '' ? 'text-gray-400 ' : '') + className}
+            className={'bg-transparent py-0 outline-0 ' + (selected.value === '' ? 'text-gray-400 ' : '') + className}
             required={required}
         >
             <option disabled value=''>

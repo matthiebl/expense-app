@@ -1,5 +1,5 @@
 import React from 'react'
-import { TransactionT } from '../resources/dataType'
+import { TransactionT } from '../resources'
 
 interface TableProps {
     title: string
@@ -26,6 +26,7 @@ export const Table: React.FC<TableProps> = ({
         <div className='flex flex-col overflow-x-auto'>
             <h2 className='text-2xl'>{title}</h2>
             <div className='flex items-end'>
+                <div className='w-1/12' />
                 {headers.map(col => (
                     <p key={crypto.randomUUID()} className='flex-1 text-right'>
                         {col}
