@@ -1,19 +1,15 @@
 import React from 'react'
 import { BasePage } from '.'
-import { Box, Navigation } from '../components'
-import { Router } from '../resources'
+import { Box, DisplayTablePage, Navigation } from '../components'
+import { CTI, Router, TransactionT } from '../resources'
 
 export const Expenses = () => {
     const [loading, setLoading] = React.useState(true)
-    const [data, setData] = React.useState(null)
+    const [data, setData] = React.useState<TransactionT[]>([])
 
     React.useEffect(() => {
-        const onLoad = async () => {
-            const data = await get()
-            setData(data.expense)
-            setLoading(false)
-        }
-        onLoad()
+        setData([])
+        setLoading(false)
     }, [])
 
     return (
@@ -22,7 +18,7 @@ export const Expenses = () => {
                 <Box>
                     <h1 className='text-4xl'>{Router.expenses.text}</h1>
                 </Box>
-                <DisplayTable data={data} loading={loading} />
+                <DisplayTablePage loading={loading} transactions={data} types={CTI.Expense} />
             </div>
         </BasePage>
     )
