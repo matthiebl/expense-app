@@ -1,5 +1,6 @@
 import React from 'react'
 
+export * from './calculations'
 export * from './routes'
 
 export type TransactionT = {
@@ -44,121 +45,123 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (_: T) => 
     return [value, setValue]
 }
 
-export const CTI = JSON.stringify({
-    income: {
-        wages: {
-            paycheck: true,
-            scholarship: true,
-            bonus: true,
-            other: true,
+export type CategoryT = 'Income' | 'Expense' | 'Investment'
+
+export const CTI: Record<CategoryT, { [k: string]: { [k: string]: boolean } }> = {
+    Income: {
+        Wages: {
+            Paycheck: true,
+            Scholarship: true,
+            Bonus: true,
+            Other: true,
         },
-        future: {
-            savings: true,
-            interest: true,
-            dividend: true,
+        Investment: {
+            Savings: true,
+            Interest: true,
+            Dividend: true,
         },
-        other: {
-            gifts: true,
-            refund: true,
-            other: true,
-        },
-    },
-    expense: {
-        tax: {
-            income: true,
-            capital: true,
-            student: true,
-            other: true,
-        },
-        education: {
-            supplies: true,
-        },
-        entertainment: {
-            books: true,
-            games: true,
-            streaming: true,
-            concerts: true,
-            dates: true,
-            drinks: true,
-            food: true,
-        },
-        everyday: {
-            groceries: true,
-            clothes: true,
-            food: true,
-            grooming: true,
-        },
-        gifts: {
-            gifts: true,
-            charity: true,
-        },
-        health: {
-            medical: true,
-            fitness: true,
-        },
-        home: {
-            rent: true,
-            furniture: true,
-            maintenance: true,
-            rates: true,
-            other: true,
-        },
-        insurance: {
-            car: true,
-            health: true,
-            life: true,
-            home: true,
-            contents: true,
-        },
-        pets: {
-            food: true,
-            vet: true,
-            supplies: true,
-            toys: true,
-        },
-        technology: {
-            domains: true,
-            services: true,
-            hardware: true,
-            software: true,
-        },
-        transport: {
-            fuel: true,
-            repairs: true,
-            registration: true,
-            public: true,
-        },
-        holiday: {
-            travel: true,
-            accomodation: true,
-            food: true,
-            entertainment: true,
-        },
-        utilities: {
-            mobile: true,
-            internet: true,
-            electricity: true,
-            water: true,
-            gas: true,
-            garbage: true,
-        },
-        other: {
-            other: true,
+        Other: {
+            Gifts: true,
+            Refund: true,
+            Other: true,
         },
     },
-    investment: {
-        savings: {
+    Expense: {
+        Tax: {
+            Income: true,
+            Capital: true,
+            Student: true,
+            Other: true,
+        },
+        Education: {
+            Supplies: true,
+        },
+        Entertainment: {
+            Books: true,
+            Games: true,
+            Streaming: true,
+            Concerts: true,
+            Dates: true,
+            Drinks: true,
+            Food: true,
+        },
+        Everyday: {
+            Groceries: true,
+            Clothes: true,
+            Food: true,
+            Grooming: true,
+        },
+        Gifts: {
+            Gifts: true,
+            Charity: true,
+        },
+        Health: {
+            Medical: true,
+            Fitness: true,
+        },
+        Home: {
+            Rent: true,
+            Furniture: true,
+            Maintenance: true,
+            Rates: true,
+            Other: true,
+        },
+        Insurance: {
+            Car: true,
+            Health: true,
+            Life: true,
+            Home: true,
+            Contents: true,
+        },
+        Pets: {
+            Food: true,
+            Vet: true,
+            Supplies: true,
+            Toys: true,
+        },
+        Technology: {
+            Domains: true,
+            Services: true,
+            Hardware: true,
+            Software: true,
+        },
+        Transport: {
+            Fuel: true,
+            Repairs: true,
+            Registration: true,
+            Public: true,
+        },
+        Holiday: {
+            Travel: true,
+            Accomodation: true,
+            Food: true,
+            Entertainment: true,
+        },
+        Utilities: {
+            Mobile: true,
+            Internet: true,
+            Electricity: true,
+            Water: true,
+            Gas: true,
+            Garbage: true,
+        },
+        Other: {
+            Other: true,
+        },
+    },
+    Investment: {
+        Savings: {
             account: true,
-            holiday: true,
-            vehicle: true,
-            other: true,
+            Holiday: true,
+            Vehicle: true,
+            Other: true,
         },
-        shares: {
-            australian: true,
-            international: true,
+        Shares: {
+            Australian: true,
+            International: true,
         },
-        other: {
-            other: true,
+        Other: {
+            Other: true,
         },
     },
-})
+}
