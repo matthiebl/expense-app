@@ -8,6 +8,7 @@ export const Income = () => {
     const [data, setData] = React.useState<TransactionT[]>([])
 
     React.useEffect(() => {
+        document.title = 'Finances | Income'
         setData([])
         setLoading(false)
     }, [])

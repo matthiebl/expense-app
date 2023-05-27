@@ -13,6 +13,7 @@ export const Dashboard = () => {
     const [all, setAll] = React.useState<TransactionT[]>([])
 
     React.useEffect(() => {
+        document.title = 'Finances | Dashboard'
         const onLoad = async () => {
             const res = await getAll()
             setAll(res)

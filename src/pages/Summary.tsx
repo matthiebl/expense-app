@@ -26,6 +26,7 @@ export const Summary = () => {
     const [modalOpen, setModalOpen] = React.useState(false)
 
     React.useEffect(() => {
+        document.title = 'Finances | Summary'
         setTransactions([])
         setLoading(false)
     }, [])

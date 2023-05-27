@@ -22,6 +22,7 @@ export const NewEntry = ({}) => {
     const [fields, setFields] = React.useState(EMPTY_FIELDS)
 
     React.useEffect(() => {
+        document.title = 'Finances | Enter Transactions'
         onAuthStateChanged(auth, user => {
             if (user) {
                 getCategories(auth.currentUser?.uid, cti => {
