@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Router } from './resources/routes'
+import { Dashboard, Expenses, Income, Investments, NewEntry, Summary } from './pages'
 
 const App = () => (
     <BrowserRouter>
