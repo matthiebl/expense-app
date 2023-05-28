@@ -1,4 +1,10 @@
 export const Router = {
+    login: {
+        path: '/login',
+        info: 'login',
+        text: 'Login',
+        linktext: 'Login',
+    },
     home: {
         path: '/',
         info: 'dashboard',
