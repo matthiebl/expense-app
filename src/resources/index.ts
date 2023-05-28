@@ -46,8 +46,9 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (_: T) => 
 }
 
 export type CategoryT = 'Income' | 'Expense' | 'Investment'
+export type CTIT = Record<CategoryT, { [k: string]: { [k: string]: boolean } }>
 
-export const CTI: Record<CategoryT, { [k: string]: { [k: string]: boolean } }> = {
+export const CTI: CTIT = {
     Income: {
         Wages: {
             Paycheck: true,

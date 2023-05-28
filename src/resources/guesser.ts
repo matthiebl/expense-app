@@ -1,20 +1,20 @@
 export const guessCTI = (description: string, amount: number) => {
     const words = description.split(' ')
     if (words[0] === 'Transfer' && amount < 0) {
-        if (words[words.length - 1].toLowerCase() === 'holiday')
-            return { category: 'future', type: 'savings', item: 'holiday' }
-        if (words[words.length - 1] === 'account') return { category: 'future', type: 'savings', item: 'account' }
-        return { category: 'future', type: 'savings', item: '' }
+        if (words[words.length - 1].toLowerCase() === 'Holiday')
+            return { category: 'Investment', type: 'Savings', item: 'Holiday' }
+        if (words[words.length - 1] === 'account') return { category: 'Investment', type: 'Savings', item: 'Account' }
+        return { category: 'Investment', type: 'Savings', item: '' }
     }
 
-    if (words.includes('Salary')) return { category: 'income', type: 'wages', item: 'paycheck' }
+    if (words.includes('Salary')) return { category: 'Income', type: 'Wages', item: 'Paycheck' }
 
-    if (description.includes('Anytime Fitness')) return { category: 'expense', type: 'health', item: 'fitness' }
+    if (description.includes('Anytime Fitness')) return { category: 'Expense', type: 'Health', item: 'Fitness' }
 
     if (description.toLowerCase().includes('mcdonalds') || description.includes('KFC'))
-        return { category: 'expense', type: 'entertainment', item: 'food' }
+        return { category: 'Expense', type: 'Entertainment', item: 'Food' }
 
-    if (description.includes('SUSHI')) return { category: 'expense', type: 'everyday', item: 'food' }
+    if (description.includes('SUSHI')) return { category: 'Expense', type: 'Everyday', item: 'Food' }
 
     if (
         description.includes('WOOLWORTHS') ||
@@ -22,14 +22,14 @@ export const guessCTI = (description: string, amount: number) => {
         description.includes('ALDI') ||
         description.includes('BAKERS DELIGHT')
     )
-        return { category: 'expense', type: 'everyday', item: 'groceries' }
+        return { category: 'Expense', type: 'Everyday', item: 'Groceries' }
 
-    if (description.includes('More Telecom')) return { category: 'expense', type: 'utilities', item: 'mobile' }
+    if (description.includes('More Telecom')) return { category: 'Expense', type: 'Utilities', item: 'Mobile' }
 
-    if (description.includes('DOMAINS')) return { category: 'expense', type: 'technology', item: 'domains' }
+    if (description.includes('DOMAINS')) return { category: 'Expense', type: 'Technology', item: 'Domains' }
 
-    if (description.includes('APPLE.COM/BILL')) return { category: 'expense', type: 'technology', item: 'services' }
+    if (description.includes('APPLE.COM/BILL')) return { category: 'Expense', type: 'Technology', item: 'Services' }
 
-    if (amount < 0) return { category: 'expense', type: '', item: '' }
-    else return { category: 'income', type: '', item: '' }
+    if (amount < 0) return { category: 'Expense', type: '', item: '' }
+    else return { category: 'Income', type: '', item: '' }
 }

@@ -4,7 +4,7 @@ import { auth } from '../api/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { addTransaction, deleteTransaction, getCategories } from '../api'
 
-import { Router, TransactionT } from '../resources'
+import { CTI, CTIT, CategoryT, Router, TransactionT } from '../resources'
 import { guessCTI } from '../resources/guesser'
 
 import { BasePage } from '.'
@@ -12,7 +12,8 @@ import { Box, Button, Card, Navigation, Select } from '../components'
 
 export const NewEntry = ({}) => {
     const [loading, setLoading] = React.useState(true)
-    const [categories, setCategories] = React.useState<string>('')
+    const [uid, setUID] = React.useState('')
+    const [categories, setCategories] = React.useState<CTIT>(CTI)
 
     const [state, setState] = React.useState('single')
     const [autoFill, setAutoFill] = React.useState<string[][]>([])
@@ -26,6 +27,7 @@ export const NewEntry = ({}) => {
         onAuthStateChanged(auth, user => {
             if (user) {
                 getCategories(auth.currentUser?.uid, cti => {
+                    setUID(user.uid)
                     setCategories(cti)
                     setLoading(false)
                 })
@@ -67,7 +69,7 @@ export const NewEntry = ({}) => {
         try {
             const value = parseFloat(fields.amount)
             addTransaction(
-                '1',
+                uid,
                 fields.title || 'Untitled',
                 fields.desc,
                 fields.date,
@@ -75,9 +77,8 @@ export const NewEntry = ({}) => {
                 fields.category,
                 fields.type,
                 fields.item,
-                transaction => console.log(transaction)
+                transaction => setPrevious([transaction, ...previous])
             )
-            // setPrevious([response, ...previous])
             setFields(EMPTY_FIELDS)
             if (autoFill.length === 0) return
             setAutoFill([...autoFill.slice(1)])
@@ -110,18 +111,18 @@ export const NewEntry = ({}) => {
                             placeholder='Title'
                             value={fields.title}
                             onChange={ev => setFields({ ...fields, title: ev.target.value })}
-                            className='rounded-2xl border border-transparent bg-transparent p-2 px-3 text-lg outline-0 focus:border-white'
+                            className='rounded-3xl border bg-transparent p-2 px-4 text-lg outline-0 focus:border-white focus:ring-0'
                         />
                         <input
                             type='text'
                             placeholder='Short description'
                             value={fields.desc}
                             onChange={ev => setFields({ ...fields, desc: ev.target.value })}
-                            className='rounded-2xl border border-transparent bg-transparent p-2 px-3 outline-0 invalid:border-alt-500 focus:border-white'
+                            className='rounded-3xl border bg-transparent p-2 px-4 outline-0 invalid:border-alt-500 focus:border-white focus:ring-0'
                             required
                         />
 
-                        <div className='flex gap-8 border border-transparent p-2 px-3'>
+                        <div className='flex gap-8 p-2 px-3'>
                             <Select
                                 label='Category:'
                                 placeholder='Select a category'
@@ -135,7 +136,7 @@ export const NewEntry = ({}) => {
                                         item: '',
                                     })
                                 }}
-                                className='w-48 rounded-2xl border border-transparent px-1 invalid:border-alt-500 focus:border-white'
+                                className='w-48 rounded-2xl border pl-3 invalid:border-alt-500 focus:border-white focus:ring-0'
                             />
 
                             <Select
@@ -150,7 +151,7 @@ export const NewEntry = ({}) => {
                                         item: '',
                                     })
                                 }}
-                                className='w-48 rounded-2xl border border-transparent px-1 invalid:border-alt-500 focus:border-white'
+                                className='w-48 rounded-2xl border pl-3 invalid:border-alt-500 focus:border-white focus:ring-0'
                             />
 
                             <Select
@@ -163,7 +164,7 @@ export const NewEntry = ({}) => {
                                         : determineSelectItems(categories, fields.category, fields.type)
                                 }
                                 onChange={ev => setFields({ ...fields, item: ev.target.value })}
-                                className='w-48 rounded-2xl border border-transparent px-1 invalid:border-alt-500 focus:border-white'
+                                className='w-48 rounded-2xl border pl-3 invalid:border-alt-500 focus:border-white focus:ring-0'
                             />
                         </div>
 
@@ -176,7 +177,7 @@ export const NewEntry = ({}) => {
                                     if (/^\$ -?\d*[.]?\d{0,2}$/.test(ev.target.value))
                                         setFields({ ...fields, amount: ev.target.value.slice(2) })
                                 }}
-                                className='rounded-2xl border border-transparent bg-transparent p-2 px-3 text-lg outline-0 before:block before:content-["$"] focus:border-white'
+                                className='rounded-3xl border bg-transparent p-2 px-3 text-lg outline-0 before:block before:content-["$"] focus:border-white focus:ring-0'
                             />
 
                             <input
@@ -184,7 +185,7 @@ export const NewEntry = ({}) => {
                                 placeholder='01/01/2023'
                                 value={fields.date}
                                 onChange={ev => setFields({ ...fields, date: ev.target.value })}
-                                className='rounded-2xl border border-transparent bg-transparent p-2 px-3 text-lg text-white outline-0 focus:border-white'
+                                className='rounded-3xl border bg-transparent p-2 px-3 text-lg text-white outline-0 focus:border-white focus:ring-0'
                             />
                         </div>
 
@@ -304,11 +305,28 @@ const EMPTY_FIELDS = {
     date: '',
 }
 
-const determineSelectItems = (json: string, key1: string = '', key2: string = '') => {
-    let obj = JSON.parse(json)
-    if (key1 !== '') obj = obj[key1]
-    if (key2 !== '') obj = obj[key2]
-    return Object.keys(obj).map(key => ({
+const strToCatT = (s: string): CategoryT => {
+    if (s === 'Income') return 'Income'
+    if (s === 'Expense') return 'Expense'
+    return 'Investment'
+}
+
+const determineSelectItems = (categories: CTIT, key1?: string, key2: string = '') => {
+    if (key1) {
+        let obj = categories[strToCatT(key1)]
+        if (key2 !== '') {
+            let obj2 = obj[key2]
+            return Object.keys(obj2).map(key => ({
+                value: key,
+                label: key,
+            }))
+        }
+        return Object.keys(obj).map(key => ({
+            value: key,
+            label: key,
+        }))
+    }
+    return Object.keys(categories).map(key => ({
         value: key,
         label: key,
     }))

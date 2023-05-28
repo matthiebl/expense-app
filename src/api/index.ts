@@ -11,9 +11,9 @@ import {
     where,
 } from 'firebase/firestore'
 import { database } from './firebase'
-import { CTI } from '../resources'
+import { CTI, CTIT, TransactionT } from '../resources'
 
-export const getCategories = (uid: string | null | undefined, callback: (categories: string) => any) => {
+export const getCategories = (uid: string | null | undefined, callback: (categories: CTIT) => any) => {
     if (!uid) return
     callback(CTI)
 }
@@ -42,9 +42,9 @@ export const addTransaction = (
     category: string,
     type: string,
     item: string,
-    callback: (ref: DocumentReference<DocumentData>) => any
+    callback: (ref: TransactionT) => any
 ) => {
-    addDoc(collection(database, 'transactions'), {
+    let transaction = {
         uid,
         title,
         description,
@@ -53,8 +53,14 @@ export const addTransaction = (
         category,
         type,
         item,
-    })
-        .then(ref => callback(ref))
+    }
+    addDoc(collection(database, 'transactions'), transaction)
+        .then(ref =>
+            callback({
+                ...transaction,
+                id: ref.id,
+            })
+        )
         .catch(error => console.error(error))
 }
 
