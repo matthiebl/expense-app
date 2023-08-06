@@ -5,20 +5,13 @@ import { height } from '../resources/sizingSpacing'
 import { BasePage } from '.'
 import { Card, IconButton, Modal, Navigation, SearchIcon } from '../components'
 
-const getAll = async () => {
-    return []
+interface DashboardProps {
+    data: TransactionT[]
 }
 
-export const Dashboard = () => {
-    const [all, setAll] = React.useState<TransactionT[]>([])
-
+export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     React.useEffect(() => {
         document.title = 'Finances | Dashboard'
-        const onLoad = async () => {
-            const res = await getAll()
-            setAll(res)
-        }
-        onLoad()
     }, [])
 
     const [modalContent, setModalContent] = React.useState<TransactionT[]>([])
@@ -28,7 +21,7 @@ export const Dashboard = () => {
 
     const searchFor = (term: string) => {
         if (term === '') return
-        const found = all
+        const found = data
             .filter(t => t.description.toLowerCase().includes(term.toLowerCase()))
             .sort((t1, t2) => -t1.date.localeCompare(t2.date))
         setModalContent(found)
@@ -57,33 +50,33 @@ export const Dashboard = () => {
                     <div className='flex gap-8'>
                         <Card className='py-7'>
                             <p className='mb-3'>Income</p>
-                            {incomeChange(all) === '' ? (
+                            {incomeChange(data) === '' ? (
                                 <p className='text-gray-300'>Missing data for last month</p>
                             ) : (
                                 <>
-                                    <p className='text-6xl text-primary-500'>{incomeChange(all)}</p>
+                                    <p className='text-6xl text-primary-500'>{incomeChange(data)}</p>
                                     <p className='text-sm text-primary-500'>change since last month</p>
                                 </>
                             )}
                         </Card>
                         <Card className='py-7'>
                             <p className='mb-3'>Expenses</p>
-                            {expenseChange(all) === '' ? (
+                            {expenseChange(data) === '' ? (
                                 <p className='text-gray-300'>Missing data for last month</p>
                             ) : (
                                 <>
-                                    <p className='text-6xl text-alt-500'>{expenseChange(all)}</p>
+                                    <p className='text-6xl text-alt-500'>{expenseChange(data)}</p>
                                     <p className='text-sm text-alt-500'>change since last month</p>
                                 </>
                             )}
                         </Card>
                     </div>
-                    <IncomeExpenseGraph transactions={all} rule='flex xl:hidden' months={2} />
-                    <IncomeExpenseGraph transactions={all} rule='hidden xl:flex 2xl:hidden' months={3} />
-                    <IncomeExpenseGraph transactions={all} rule='hidden 2xl:flex 3xl:hidden' months={4} />
-                    <IncomeExpenseGraph transactions={all} rule='hidden 3xl:flex 4xl:hidden' months={5} />
-                    <IncomeExpenseGraph transactions={all} rule='hidden 4xl:flex 5xl:hidden' months={6} />
-                    <IncomeExpenseGraph transactions={all} rule='hidden 5xl:flex' months={7} />
+                    <IncomeExpenseGraph transactions={data} rule='flex xl:hidden' months={2} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden xl:flex 2xl:hidden' months={3} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden 2xl:flex 3xl:hidden' months={4} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden 3xl:flex 4xl:hidden' months={5} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden 4xl:flex 5xl:hidden' months={6} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden 5xl:flex' months={7} />
                 </div>
 
                 <div className='flex h-full w-80 flex-col gap-8'>
@@ -185,12 +178,12 @@ const getPreviousData = (transactions: TransactionT[], amount: number): PrevData
 
     const income = (date: Date): number =>
         sum(
-            transactionsInMonth(transactions, date, t => t.category === 'income'),
+            transactionsInMonth(transactions, date, t => t.category === 'Income'),
             t => t.amount
         )
     const expense = (date: Date): number =>
         sum(
-            transactionsInMonth(transactions, date, t => t.category !== 'income'),
+            transactionsInMonth(transactions, date, t => t.category !== 'Income'),
             t => t.amount
         )
 

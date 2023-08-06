@@ -8,6 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './api/firebase'
 import { TransactionT } from './resources'
 import { Loading } from './pages/Loading'
+import { getTransactions } from './api'
 
 const App = () => {
     const [authed, setAuthed] = React.useState<null | boolean>(null)
@@ -19,9 +20,11 @@ const App = () => {
     React.useEffect(() => {
         onAuthStateChanged(auth, user => {
             if (user) {
-                console.log(user.uid)
                 setAuthed(true)
-                setTransactions({ ...transactions, loading: false })
+                getTransactions(user.uid, transactions => {
+                    console.log(transactions)
+                    setTransactions({ loading: false, data: transactions })
+                })
             } else {
                 setAuthed(false)
             }
@@ -31,13 +34,13 @@ const App = () => {
     return (
         <BrowserRouter>
             <Routes>
-                {authed && (
+                {authed && !transactions.loading && (
                     <>
-                        <Route path={Router.home.path} element={<Dashboard />} />
-                        <Route path={Router.summary.path} element={<Summary />} />
-                        <Route path={Router.income.path} element={<Income />} />
-                        <Route path={Router.expenses.path} element={<Expenses />} />
-                        <Route path={Router.invest.path} element={<Investments />} />
+                        <Route path={Router.home.path} element={<Dashboard {...transactions} />} />
+                        <Route path={Router.summary.path} element={<Summary transactions={transactions} />} />
+                        <Route path={Router.income.path} element={<Income transactions={transactions} />} />
+                        <Route path={Router.expenses.path} element={<Expenses transactions={transactions} />} />
+                        <Route path={Router.invest.path} element={<Investments transactions={transactions} />} />
                         <Route path={Router.add.path} element={<NewEntry />} />
                     </>
                 )}

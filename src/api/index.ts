@@ -1,15 +1,4 @@
-import {
-    DocumentData,
-    DocumentReference,
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    getDocs,
-    orderBy,
-    query,
-    where,
-} from 'firebase/firestore'
+import { DocumentData, addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { database } from './firebase'
 import { CTI, CTIT, TransactionT } from '../resources'
 
@@ -18,16 +7,25 @@ export const getCategories = (uid: string | null | undefined, callback: (categor
     callback(CTI)
 }
 
-export const getTransactions = (uid: string | null | undefined, callback: (transactions: DocumentData[]) => any) => {
+export const getTransactions = (uid: string | null | undefined, callback: (transactions: TransactionT[]) => any) => {
     if (!uid) return
 
     let q = query(collection(database, 'transactions'), where('uid', '==', uid), orderBy('date', 'desc'))
     getDocs(q).then(data => {
-        let transactions: DocumentData[] = []
+        let transactions: TransactionT[] = []
         data?.forEach(doc => {
             let transaction = doc.data()
             transaction.id = doc.id
-            transactions.push(transaction)
+            transactions.push({
+                id: transaction.id,
+                title: transaction.title,
+                description: transaction.description,
+                amount: transaction.amount,
+                date: transaction.date,
+                category: transaction.category,
+                type: transaction.type,
+                item: transaction.item,
+            })
         })
         callback(transactions)
     })
