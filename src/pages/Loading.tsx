@@ -15,7 +15,7 @@ export const Loading: React.FC<LoadingProps> = props => {
         if (props.auth === false) {
             navigate(Router.login.path)
         }
-    }, [])
+    }, [props.auth])
 
     return (
         <BasePage>
