@@ -10,7 +10,17 @@ import { guessCTI } from '../resources/guesser'
 import { BasePage } from '.'
 import { Box, Button, Card, Navigation, Select } from '../components'
 
-export const NewEntry = ({}) => {
+interface NewEntryProps {
+    data: { loading: boolean; data: TransactionT[] }
+    setData: React.Dispatch<
+        React.SetStateAction<{
+            loading: boolean
+            data: TransactionT[]
+        }>
+    >
+}
+
+export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
     const [loading, setLoading] = React.useState(true)
     const [uid, setUID] = React.useState('')
     const [categories, setCategories] = React.useState<CTIT>(CTI)
@@ -77,7 +87,10 @@ export const NewEntry = ({}) => {
                 fields.category,
                 fields.type,
                 fields.item,
-                transaction => setPrevious([transaction, ...previous])
+                transaction => {
+                    setData({ ...data, data: [...data.data, transaction] })
+                    setPrevious([transaction, ...previous])
+                }
             )
             setFields(EMPTY_FIELDS)
             if (autoFill.length === 0) return
@@ -250,6 +263,7 @@ export const NewEntry = ({}) => {
                                 <button
                                     onClick={() => {
                                         deleteTransaction(prev.id, () => {
+                                            setData({ ...data, data: data.data.filter(t => t.id !== prev.id) })
                                             setRemoved([...removed, prev.id])
                                         })
                                     }}

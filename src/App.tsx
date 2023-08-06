@@ -41,7 +41,10 @@ const App = () => {
                         <Route path={Router.income.path} element={<Income {...transactions} />} />
                         <Route path={Router.expenses.path} element={<Expenses {...transactions} />} />
                         <Route path={Router.invest.path} element={<Investments {...transactions} />} />
-                        <Route path={Router.add.path} element={<NewEntry />} />
+                        <Route
+                            path={Router.add.path}
+                            element={<NewEntry data={transactions} setData={setTransactions} />}
+                        />
                     </>
                 )}
                 <Route path={Router.login.path} element={<UserAuth />} />
