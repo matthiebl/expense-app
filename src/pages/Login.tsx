@@ -48,7 +48,7 @@ export const UserAuth: React.FC<UserAuthProps> = ({ register = false }) => {
         <BasePage>
             <div className='flex h-full w-full items-center justify-center'>
                 <div className='w-full max-w-md p-4'>
-                    <h1 className='mb-4 text-3xl'>Sign in to your account</h1>
+                    <h1 className='mb-4 text-3xl'>{register ? 'Register' : 'Sign in to'} your account</h1>
 
                     <label className='mb-1 text-gray-300'>Email:</label>
                     <input
@@ -68,6 +68,16 @@ export const UserAuth: React.FC<UserAuthProps> = ({ register = false }) => {
                         className='mb-9 mt-1 w-full rounded-3xl border border-primary-500 bg-transparent p-2 px-4 outline-0 focus:border-white focus:ring-0'
                         required
                     />
+
+                    <p className='mb-8 w-full text-center text-gray-400'>
+                        {register ? 'Already have an account?' : 'New here?'}{' '}
+                        <a
+                            className='cursor-pointer underline hover:text-gray-200'
+                            onClick={() => navigate(register ? Router.login.path : Router.register.path)}
+                        >
+                            {register ? 'Log In' : 'Register'}
+                        </a>
+                    </p>
 
                     <Button
                         onClick={register ? onRegister : onSignIn}
