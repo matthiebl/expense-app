@@ -46,14 +46,19 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
     }, [])
 
     React.useEffect(() => {
-        if (autoFill.length < 1) return
-        const guess = guessCTI(autoFill[0][2], parseFloat(autoFill[0][1]))
+        if (autoFill.length === 0) return
+        const row = autoFill[0]
+        let cti = { category: row[4] || '', type: row[5] || '', item: row[6] || '' }
+        if (cti.category === '' || cti.type === '' || cti.item === '') {
+            cti = guessCTI(row[2], parseFloat(row[1]))
+        }
+
         setFields({
             ...fields,
-            desc: autoFill[0][2],
-            amount: autoFill[0][1],
-            date: autoFill[0][0].split('/').reverse().join('-'),
-            ...guess,
+            desc: row[2],
+            amount: row[1],
+            date: row[0].split('/').reverse().join('-'),
+            ...cti,
         })
     }, [autoFill])
 

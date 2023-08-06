@@ -152,7 +152,7 @@ export const CTI: CTIT = {
     },
     Investment: {
         Savings: {
-            account: true,
+            Account: true,
             Holiday: true,
             Vehicle: true,
             Other: true,
