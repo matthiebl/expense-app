@@ -3,14 +3,13 @@ import { BasePage } from '.'
 import { Box, DisplayTablePage, Navigation } from '../components'
 import { CTI, Router, TransactionT } from '../resources'
 
-export const Investments = () => {
-    const [loading, setLoading] = React.useState(true)
-    const [data, setData] = React.useState<TransactionT[]>([])
+interface InvestmentsProps {
+    data: TransactionT[]
+}
 
+export const Investments: React.FC<InvestmentsProps> = ({ data }) => {
     React.useEffect(() => {
         document.title = 'Finances | Investments'
-        setData([])
-        setLoading(false)
     }, [])
 
     return (
@@ -19,7 +18,7 @@ export const Investments = () => {
                 <Box>
                     <h1 className='text-4xl'>{Router.invest.text}</h1>
                 </Box>
-                <DisplayTablePage loading={loading} transactions={data} types={CTI.Investment} flipTableSign />
+                <DisplayTablePage loading={false} transactions={data} types={CTI.Investment} flipTableSign />
             </div>
         </BasePage>
     )

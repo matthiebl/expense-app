@@ -1,12 +1,24 @@
 import React from 'react'
 import { Router } from '../resources/routes'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '.'
+import { getAuth, signOut } from 'firebase/auth'
 
 interface NavigationProps {}
 
 export const Navigation: React.FC<NavigationProps> = ({}) => {
-    // const [show, setShow] = React.useState(true)
+    const navigate = useNavigate()
+
+    const onSignOut = () => {
+        const auth = getAuth()
+        signOut(auth)
+            .then(() => {
+                navigate(Router.login.path)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
 
     return (
         <div
@@ -37,6 +49,9 @@ export const Navigation: React.FC<NavigationProps> = ({}) => {
                 </Button>
                 <Button link={Router.add.path} colour='bg-gradient-to-br from-back-500'>
                     {Router.add.linktext}
+                </Button>
+                <Button onClick={onSignOut} colour='bg-gradient-to-br from-back-500'>
+                    Logout
                 </Button>
             </nav>
         </div>

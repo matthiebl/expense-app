@@ -5,6 +5,12 @@ export const Router = {
         text: 'Login',
         linktext: 'Login',
     },
+    register: {
+        path: '/register',
+        info: 'register',
+        text: 'Register',
+        linktext: 'Register',
+    },
     home: {
         path: '/',
         info: 'dashboard',

@@ -1,4 +1,4 @@
-import { DocumentData, addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { database } from './firebase'
 import { CTI, CTIT, TransactionT } from '../resources'
 

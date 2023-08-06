@@ -15,21 +15,20 @@ import {
     yearsItems,
 } from '../resources'
 
-export const Summary = () => {
-    const [loading, setLoading] = React.useState(true)
-    const [transactions, setTransactions] = React.useState<TransactionT[]>([])
+interface SummaryProps {
+    data: TransactionT[]
+}
+
+export const Summary: React.FC<SummaryProps> = ({ data }) => {
+    React.useEffect(() => {
+        document.title = 'Finances | Summary'
+    }, [])
 
     const [view, setView] = useLocalStorage<ViewT>('view', 'Monthly')
     const [date, setDate] = useLocalStorage('date', yearsItems().at(-1) || { label: '<error>', value: '<error>' })
 
     const [selected, setSelected] = React.useState<TransactionT[]>([])
     const [modalOpen, setModalOpen] = React.useState(false)
-
-    React.useEffect(() => {
-        document.title = 'Finances | Summary'
-        setTransactions([])
-        setLoading(false)
-    }, [])
 
     return (
         <BasePage navigation={<Navigation />}>
@@ -80,11 +79,33 @@ export const Summary = () => {
                 </div>
 
                 <div className='flex flex-col gap-10'>
-                    {!loading && (
-                        <>
-                            <Card>
+                    <>
+                        <Card>
+                            <Table
+                                title='Account'
+                                headers={
+                                    view === 'Monthly' && date.label.includes('FY')
+                                        ? [
+                                              ...periodHeaders[view].slice(6, 12),
+                                              ...periodHeaders[view].slice(0, 6),
+                                              'Total',
+                                          ]
+                                        : periodHeaders[view]
+                                }
+                                rowHeaders={[...CATEGORIES, 'Change']}
+                                rows={accountRows(view, JSON.parse(date.value), data)}
+                                tooltips
+                                onClickToolTip={(_, values) => {
+                                    setSelected(values)
+                                    setModalOpen(true)
+                                }}
+                            />
+                        </Card>
+
+                        {CATEGORIES.map(category => (
+                            <Card key={category}>
                                 <Table
-                                    title='Account'
+                                    title={category}
                                     headers={
                                         view === 'Monthly' && date.label.includes('FY')
                                             ? [
@@ -94,48 +115,24 @@ export const Summary = () => {
                                               ]
                                             : periodHeaders[view]
                                     }
-                                    rowHeaders={[...CATEGORIES, 'Change']}
-                                    rows={accountRows(view, JSON.parse(date.value), transactions)}
+                                    rowHeaders={Object.keys(CTI[category])}
+                                    rows={formatCategoryRows(
+                                        view,
+                                        JSON.parse(date.value),
+                                        data,
+                                        category,
+                                        Object.keys(CTI[category])
+                                    )}
                                     tooltips
                                     onClickToolTip={(_, values) => {
                                         setSelected(values)
                                         setModalOpen(true)
                                     }}
+                                    flipSign={category === 'Investment'}
                                 />
                             </Card>
-
-                            {CATEGORIES.map(category => (
-                                <Card key={category}>
-                                    <Table
-                                        title={category}
-                                        headers={
-                                            view === 'Monthly' && date.label.includes('FY')
-                                                ? [
-                                                      ...periodHeaders[view].slice(6, 12),
-                                                      ...periodHeaders[view].slice(0, 6),
-                                                      'Total',
-                                                  ]
-                                                : periodHeaders[view]
-                                        }
-                                        rowHeaders={Object.keys(CTI[category])}
-                                        rows={formatCategoryRows(
-                                            view,
-                                            JSON.parse(date.value),
-                                            transactions,
-                                            category,
-                                            Object.keys(CTI[category])
-                                        )}
-                                        tooltips
-                                        onClickToolTip={(_, values) => {
-                                            setSelected(values)
-                                            setModalOpen(true)
-                                        }}
-                                        flipSign={category === 'Investment'}
-                                    />
-                                </Card>
-                            ))}
-                        </>
-                    )}
+                        ))}
+                    </>
                 </div>
             </div>
         </BasePage>
