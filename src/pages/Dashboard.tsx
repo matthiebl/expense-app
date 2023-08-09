@@ -3,7 +3,7 @@ import React from 'react'
 import { TransactionT } from '../resources'
 import { height } from '../resources/sizingSpacing'
 import { BasePage } from '.'
-import { Card, IconButton, Modal, Navigation, SearchIcon } from '../components'
+import { Button, Card, IconButton, Modal, Navigation, SearchIcon } from '../components'
 
 interface DashboardProps {
     data: TransactionT[]
@@ -14,36 +14,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         document.title = 'Finances | Dashboard'
     }, [])
 
-    const [modalContent, setModalContent] = React.useState<TransactionT[]>([])
     const [modalOpen, setModalOpen] = React.useState(false)
-
     const [search, setSearch] = React.useState('')
-
-    const searchFor = (term: string) => {
-        if (term === '') return
-        const found = data
-            .filter(t => t.description.toLowerCase().includes(term.toLowerCase()))
-            .sort((t1, t2) => -t1.date.localeCompare(t2.date))
-        setModalContent(found)
-        setModalOpen(true)
-    }
 
     return (
         <BasePage navigation={<Navigation />}>
-            <Modal
-                title={<h3 className='mb-2 text-2xl'>{`Results for '${search}'...`}</h3>}
-                isOpen={modalOpen}
-                setIsOpen={setModalOpen}
-            >
-                {modalContent.map(item => (
-                    <div key={crypto.randomUUID()} className='my-2 flex'>
-                        <p className='w-1/6'>{'$' + item.amount.toFixed(2)}</p>
-                        <p className='w-8/12 overflow-hidden text-ellipsis whitespace-nowrap'>{item.description}</p>
-                        <p className='w-1/6 overflow-hidden text-ellipsis whitespace-nowrap text-right'>{item.date}</p>
-                    </div>
-                ))}
-                {modalContent.length === 0 && <p>No transactions found</p>}
-            </Modal>
+            <SearchModal data={data} open={modalOpen} setOpen={setModalOpen} search={search} setSearch={setSearch} />
             <div className='flex h-full w-full gap-10 p-10'>
                 <div className='flex h-full flex-grow flex-col gap-8'>
                     <h1 className='text-4xl'>Finances Dashboard</h1>
@@ -80,23 +56,184 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
                 </div>
 
                 <div className='flex h-full w-80 flex-col gap-8'>
+                    <form onSubmit={ev => ev.preventDefault()}>
+                        <Card className='flex gap-2 px-4 py-4'>
+                            <input
+                                type='text'
+                                placeholder='Search transactions'
+                                value={search}
+                                onChange={ev => setSearch(ev.target.value)}
+                                className='flex-grow rounded-3xl border border-transparent bg-transparent p-2 px-4 outline-0 focus:border-white focus:ring-0'
+                            />
+                            <IconButton icon={<SearchIcon />} onClick={() => setModalOpen(true)} className='p-2' />
+                        </Card>
+                    </form>
                     <Card className='flex-grow'></Card>
                     <Card></Card>
                     <Card className='flex-grow'></Card>
-                    <Card className='flex gap-2 px-4 py-4'>
-                        <input
-                            type='text'
-                            placeholder='Search transactions'
-                            value={search}
-                            onChange={ev => setSearch(ev.target.value)}
-                            className='flex-grow rounded-2xl border border-transparent bg-transparent p-2 px-3 outline-0 focus:border-white'
-                        />
-                        <IconButton icon={<SearchIcon />} onClick={() => searchFor(search)} className='p-2' />
-                    </Card>
                 </div>
             </div>
         </BasePage>
     )
+}
+
+interface SearchModalProps {
+    data: TransactionT[]
+    open: boolean
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    search: string
+    setSearch: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const SearchModal: React.FC<SearchModalProps> = ({ data, open, setOpen, search, setSearch }) => {
+    const [filtered, setFiltered] = React.useState<TransactionT[]>([])
+
+    const [minP, setMinP] = React.useState('')
+    const [maxP, setMaxP] = React.useState('')
+    const [fromD, setFromD] = React.useState('')
+    const [toD, setToD] = React.useState('')
+
+    React.useEffect(() => {
+        if (open) {
+            applyFilters()
+        }
+    }, [open])
+
+    const applyFilters = () => {
+        const transactions = data
+            .filter(t => {
+                if (minP) {
+                    const price = parseFloat(minP)
+                    if (t.amount < price) return false
+                }
+                if (maxP) {
+                    const price = parseFloat(maxP)
+                    if (t.amount > price) return false
+                }
+                if (fromD && t.date < fromD) {
+                    return false
+                }
+                if (toD && t.date > toD) {
+                    return false
+                }
+                return t.description.toLowerCase().includes(search.toLowerCase())
+            })
+            .sort((t1, t2) => -t1.date.localeCompare(t2.date))
+        setFiltered(transactions)
+    }
+
+    return (
+        <Modal
+            title={<h3 className='mb-2 text-2xl'>Search transactions ({filtered.length})</h3>}
+            isOpen={open}
+            setIsOpen={setOpen}
+        >
+            <form
+                onSubmit={ev => ev.preventDefault()}
+                className='mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-normal'
+            >
+                <input
+                    type='text'
+                    value={'$ ' + minP}
+                    onChange={ev => {
+                        if (/^\$ -?\d*[.]?\d{0,2}$/.test(ev.target.value)) setMinP(ev.target.value.slice(2))
+                    }}
+                    className='mb-2 w-20 rounded-3xl border bg-transparent p-2 px-3 outline-0 before:block before:content-["$"] focus:border-white focus:ring-0'
+                />
+                <span className='mb-2'>-</span>
+                <input
+                    type='text'
+                    value={'$ ' + maxP}
+                    onChange={ev => {
+                        if (/^\$ -?\d*[.]?\d{0,2}$/.test(ev.target.value)) setMaxP(ev.target.value.slice(2))
+                    }}
+                    className='mb-2 w-20 rounded-3xl border bg-transparent p-2 px-3 outline-0 before:block before:content-["$"] focus:border-white focus:ring-0'
+                />
+                <input
+                    type='text'
+                    placeholder='Filter description'
+                    value={search}
+                    onChange={ev => setSearch(ev.target.value)}
+                    className='mb-2 flex-grow rounded-3xl border bg-transparent p-2 px-4 outline-0 focus:border-white focus:ring-0'
+                />
+                <input
+                    type='date'
+                    placeholder='01/01/2023'
+                    value={fromD}
+                    onChange={ev => setFromD(ev.target.value)}
+                    className='mb-2 rounded-3xl border bg-transparent p-2 px-4 text-white outline-0 focus:border-white focus:ring-0'
+                />
+                <span className='mb-2'>-</span>
+                <input
+                    type='date'
+                    placeholder='01/01/2023'
+                    value={toD}
+                    onChange={ev => setToD(ev.target.value)}
+                    className='mb-2 rounded-3xl border bg-transparent p-2 px-4 text-white outline-0 focus:border-white focus:ring-0'
+                />
+                <IconButton
+                    icon={<SearchIcon />}
+                    onClick={() => applyFilters()}
+                    className='mb-2 border border-gray-500 p-2'
+                />
+            </form>
+            <div className='mb-5 text-gray-200'>
+                {filtered.map(item => (
+                    <div key={crypto.randomUUID()} className='my-2 flex'>
+                        <p className='min-w-[15%] overflow-hidden text-ellipsis whitespace-nowrap'>
+                            {(item.amount < 0 ? '-' : '') + '$' + Math.abs(item.amount).toFixed(2)}
+                        </p>
+                        <p className='ml-2 mr-5 flex-grow overflow-hidden text-ellipsis whitespace-nowrap'>
+                            {item.description}
+                        </p>
+                        <p className='min-w-fit overflow-hidden text-ellipsis whitespace-nowrap text-right'>
+                            {item.date}
+                        </p>
+                    </div>
+                ))}
+            </div>
+            {filtered.length === 0 && (
+                <p className='my-2 w-full text-center text-gray-300'>The above search yields no results</p>
+            )}
+            <div className='sticky bottom-0 flex w-full flex-row-reverse'>
+                <Button onClick={() => outputCSV(filtered)}>Export to CSV</Button>
+            </div>
+        </Modal>
+    )
+}
+
+function download(filename: string, text: string) {
+    var element = document.createElement('a')
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+    element.setAttribute('download', filename)
+
+    element.style.display = 'none'
+    document.body.appendChild(element)
+
+    element.click()
+
+    document.body.removeChild(element)
+}
+
+const outputCSV = (transactions: TransactionT[]) => {
+    const csv = transactions
+        .reverse()
+        .map(
+            t =>
+                t.date.split('-').reverse().join('/') +
+                ',' +
+                t.amount +
+                ',' +
+                t.description +
+                ',0.0,' +
+                t.category +
+                ',' +
+                t.type +
+                ',' +
+                t.item
+        )
+        .join('\n')
+    download('Transactions.csv', 'DATE,AMOUNT,DESCRIPTION,BLANK,CATEGORY,TYPE,ITEM\n' + csv + '\n')
 }
 
 interface IncomeExpenseGraphProps {
