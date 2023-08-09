@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CloseIcon, IconButton } from '.'
+import { CloseIcon, IconButton } from '.'
 
 interface ModalProps {
     title?: React.ReactNode
@@ -14,19 +14,19 @@ export const Modal: React.FC<ModalProps> = ({ title, content, isOpen, setIsOpen,
         <div
             aria-expanded={isOpen}
             aria-hidden
-            className='fixed left-0 top-0 z-40  hidden h-screen w-screen items-center px-[25%] backdrop-blur-sm aria-expanded:flex'
+            className='fixed left-0 top-0 z-40  hidden h-screen w-screen items-center backdrop-blur-sm aria-expanded:flex'
             onClick={() => setIsOpen(false)}
         >
-            <Card
+            <div
                 aria-expanded={isOpen}
-                className='relative z-50 h-full max-h-[50%] scale-100 overflow-y-auto'
+                className='fixed z-50 h-full w-full scale-100 overflow-y-auto bg-gradient-to-br from-back-500 to-back-600 p-8 md:left-[12.5%] md:h-3/4 md:w-3/4 md:rounded-2xl xl:left-1/4 xl:w-1/2'
                 onClick={ev => ev.stopPropagation()}
             >
                 {title}
                 <IconButton icon={<CloseIcon />} onClick={() => setIsOpen(false)} className='absolute right-7 top-7' />
 
                 {content || children}
-            </Card>
+            </div>
         </div>
     </>
 )
