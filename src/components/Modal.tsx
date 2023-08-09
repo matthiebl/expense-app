@@ -14,12 +14,12 @@ export const Modal: React.FC<ModalProps> = ({ title, content, isOpen, setIsOpen,
         <div
             aria-expanded={isOpen}
             aria-hidden
-            className='fixed left-0 top-0 z-40  hidden h-screen w-screen items-center px-[25%] backdrop-blur-sm duration-100 aria-expanded:flex'
+            className='fixed left-0 top-0 z-40  hidden h-screen w-screen items-center px-[25%] backdrop-blur-sm aria-expanded:flex'
             onClick={() => setIsOpen(false)}
         >
             <Card
                 aria-expanded={isOpen}
-                className='relative z-50 h-full max-h-[50%] scale-100 overflow-y-auto duration-100'
+                className='relative z-50 h-full max-h-[50%] scale-100 overflow-y-auto'
                 onClick={ev => ev.stopPropagation()}
             >
                 {title}
