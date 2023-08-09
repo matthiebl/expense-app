@@ -48,6 +48,12 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
     React.useEffect(() => {
         if (autoFill.length === 0) return
         const row = autoFill[0]
+
+        if (invalidRow(row)) {
+            setAutoFill([...autoFill.slice(1)])
+            return
+        }
+
         let cti = { category: row[4] || '', type: row[5] || '', item: row[6] || '' }
         if (cti.category === '' || cti.type === '' || cti.item === '') {
             cti = guessCTI(row[2], parseFloat(row[1]))
@@ -261,7 +267,9 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
                                 (removed.includes(prev.id) ? ' text-gray-500' : '')
                             }
                         >
-                            <p className='w-1/6'>{'$' + prev.amount}</p>
+                            <p className='w-1/6'>
+                                {(prev.amount < 0 ? '-' : '') + '$' + Math.abs(prev.amount).toFixed(2)}
+                            </p>
                             <p className='w-8/12 overflow-hidden text-ellipsis whitespace-nowrap'>{prev.description}</p>
                             <div className='flex w-1/6 justify-end gap-2 text-right'>
                                 {prev.date}
@@ -324,15 +332,29 @@ const EMPTY_FIELDS = {
     date: '',
 }
 
-const strToCatT = (s: string): CategoryT => {
+const invalidRow = (row: string[]) => {
+    try {
+        if (row.length < 3) return true
+        if (!/\d{2}\/\d{2}\/\d{4}/.test(row[0])) return true
+        parseFloat(row[1])
+        if (row.length >= 5 && strToCatT(row[4]) === null) return true
+    } catch {
+        return true
+    }
+    return false
+}
+
+const strToCatT = (s: string): CategoryT | null => {
     if (s === 'Income') return 'Income'
     if (s === 'Expense') return 'Expense'
-    return 'Investment'
+    if (s === 'Investment') return 'Investment'
+    return null
 }
 
 const determineSelectItems = (categories: CTIT, key1?: string, key2: string = '') => {
-    if (key1) {
-        let obj = categories[strToCatT(key1)]
+    const category = strToCatT(key1 || '')
+    if (key1 && category !== null) {
+        let obj = categories[category]
         if (key2 !== '') {
             let obj2 = obj[key2]
             return Object.keys(obj2).map(key => ({
