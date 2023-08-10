@@ -3,7 +3,7 @@ import React from 'react'
 import { TransactionT } from '../resources'
 import { height } from '../resources/sizingSpacing'
 import { BasePage } from '.'
-import { Button, Card, IconButton, Modal, Navigation, SearchIcon } from '../components'
+import { Button, Card, IconButton, Modal, SearchIcon } from '../components'
 
 interface DashboardProps {
     data: TransactionT[]
@@ -18,7 +18,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     const [search, setSearch] = React.useState('')
 
     return (
-        <BasePage navigation={<Navigation />}>
+        <BasePage>
             <SearchModal data={data} open={modalOpen} setOpen={setModalOpen} search={search} setSearch={setSearch} />
             <div className='flex h-full w-full gap-10 p-10'>
                 <div className='flex h-full flex-grow flex-col gap-8'>

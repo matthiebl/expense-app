@@ -1,6 +1,6 @@
 import React from 'react'
 import { BasePage } from '.'
-import { Box, DisplayTablePage, Navigation } from '../components'
+import { Box, DisplayTablePage } from '../components'
 import { CTI, Router, TransactionT } from '../resources'
 
 interface InvestmentsProps {
@@ -13,8 +13,8 @@ export const Investments: React.FC<InvestmentsProps> = ({ data }) => {
     }, [])
 
     return (
-        <BasePage navigation={<Navigation />}>
-            <div className='flex h-full w-full flex-col gap-4 p-10'>
+        <BasePage>
+            <div className='flex h-full w-full flex-col gap-4 p-4 md:p-10'>
                 <Box>
                     <h1 className='text-4xl'>{Router.invest.text}</h1>
                 </Box>

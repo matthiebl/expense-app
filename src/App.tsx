@@ -9,6 +9,7 @@ import { auth } from './api/firebase'
 import { TransactionT } from './resources'
 import { Loading } from './pages/Loading'
 import { getTransactions } from './api'
+import { Example } from './pages/Example'
 
 const App = () => {
     const [authed, setAuthed] = React.useState<null | boolean>(null)
@@ -46,6 +47,7 @@ const App = () => {
                         />
                     </>
                 )}
+                <Route path={'/test'} element={<Example />} />
                 <Route path={Router.login.path} element={<UserAuth />} />
                 <Route path={Router.register.path} element={<UserAuth register />} />
                 <Route path='*' element={<Loading auth={authed} />} />

@@ -45,7 +45,7 @@ export const UserAuth: React.FC<UserAuthProps> = ({ register = false }) => {
     }
 
     return (
-        <BasePage>
+        <BasePage hide>
             <div className='flex h-full w-full items-center justify-center'>
                 <div className='w-full max-w-md p-4'>
                     <h1 className='mb-4 text-3xl'>{register ? 'Register' : 'Sign in to'} your account</h1>

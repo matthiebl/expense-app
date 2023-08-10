@@ -8,7 +8,7 @@ import { CTI, CTIT, Router, TransactionT, parseArrayToFields, parseCategory } fr
 import { guessCTI } from '../resources/guesser'
 
 import { BasePage } from '.'
-import { Box, Button, Card, Navigation, Select } from '../components'
+import { Box, Button, Card, Select } from '../components'
 
 interface NewEntryProps {
     data: { loading: boolean; data: TransactionT[] }
@@ -116,7 +116,7 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
     }
 
     return (
-        <BasePage navigation={<Navigation />}>
+        <BasePage>
             <div className='flex h-full w-full flex-col gap-4 p-10'>
                 <Box className='flex justify-between'>
                     <span className='flex items-end gap-2'>

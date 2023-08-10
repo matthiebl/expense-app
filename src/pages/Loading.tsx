@@ -18,7 +18,7 @@ export const Loading: React.FC<LoadingProps> = props => {
     }, [props.auth])
 
     return (
-        <BasePage>
+        <BasePage hide>
             <div className='flex h-full w-full flex-col items-center justify-center'>
                 <h1 className='mb-4 text-3xl'>Just loading...</h1>
                 <p className='text-gray-400'>Or you may have travelled to the wrong URL</p>

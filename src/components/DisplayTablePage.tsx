@@ -42,7 +42,7 @@ export const DisplayTablePage: React.FC<DisplayTablePageProps> = ({
                 ))}
             </Modal>
 
-            <div className='flex items-center justify-evenly gap-4'>
+            <div className='flex w-full flex-wrap items-center justify-center gap-3 md:justify-evenly'>
                 {VIEWS.map((v, index) => (
                     <Button
                         key={index}
@@ -67,7 +67,7 @@ export const DisplayTablePage: React.FC<DisplayTablePageProps> = ({
                 />
             </div>
 
-            <div className='flex flex-col gap-10'>
+            <div className='flex flex-col gap-4 md:gap-10'>
                 {!loading &&
                     Object.keys(types).map(type => (
                         <Card key={type}>

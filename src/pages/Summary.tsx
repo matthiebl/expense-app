@@ -1,6 +1,6 @@
 import React from 'react'
 import { BasePage } from '.'
-import { Box, Button, Card, Modal, Navigation, Select, Table } from '../components'
+import { Box, Button, Card, Modal, Select, Table } from '../components'
 import {
     CTI,
     CategoryT,
@@ -31,8 +31,8 @@ export const Summary: React.FC<SummaryProps> = ({ data }) => {
     const [modalOpen, setModalOpen] = React.useState(false)
 
     return (
-        <BasePage navigation={<Navigation />}>
-            <div className='flex h-full w-full flex-col gap-4 p-10'>
+        <BasePage>
+            <div className='flex h-full w-full flex-col gap-4 p-4 md:p-10'>
                 <Box>
                     <h1 className='text-4xl'>{Router.summary.text}</h1>
                 </Box>
@@ -53,7 +53,7 @@ export const Summary: React.FC<SummaryProps> = ({ data }) => {
                     ))}
                 </Modal>
 
-                <div className='flex items-center justify-evenly gap-4'>
+                <div className='flex w-full flex-wrap items-center justify-center gap-3 md:justify-evenly'>
                     {VIEWS.map((v, index) => (
                         <Button
                             key={index}
@@ -78,7 +78,7 @@ export const Summary: React.FC<SummaryProps> = ({ data }) => {
                     />
                 </div>
 
-                <div className='flex flex-col gap-10'>
+                <div className='flex flex-col gap-4 md:gap-10'>
                     <>
                         <Card>
                             <Table
