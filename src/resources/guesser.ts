@@ -1,4 +1,6 @@
-export const guessCTI = (description: string, amount: number) => {
+import { CategoryT } from '.'
+
+export const guessCTI = (description: string, amount: number): { category: CategoryT; type: string; item: string } => {
     const words = description.split(' ')
     if (words[0] === 'Transfer' && amount < 0) {
         if (words[words.length - 1].toLowerCase() === 'Holiday')

@@ -22,7 +22,6 @@ const App = () => {
             if (user) {
                 setAuthed(true)
                 getTransactions(user.uid, transactions => {
-                    console.log(transactions)
                     setTransactions({ loading: false, data: transactions })
                 })
             } else {

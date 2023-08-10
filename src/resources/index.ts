@@ -2,6 +2,7 @@ import React from 'react'
 
 export * from './calculations'
 export * from './routes'
+export * from './newEntry'
 
 export type TransactionT = {
     id: string

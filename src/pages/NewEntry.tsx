@@ -4,7 +4,7 @@ import { auth } from '../api/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { addTransaction, deleteTransaction, getCategories } from '../api'
 
-import { CTI, CTIT, CategoryT, Router, TransactionT } from '../resources'
+import { CTI, CTIT, Router, TransactionT, parseArrayToFields, parseCategory } from '../resources'
 import { guessCTI } from '../resources/guesser'
 
 import { BasePage } from '.'
@@ -32,6 +32,7 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
 
     const [fields, setFields] = React.useState(EMPTY_FIELDS)
 
+    // Check user and load categories
     React.useEffect(() => {
         document.title = 'Finances | Enter Transactions'
         onAuthStateChanged(auth, user => {
@@ -45,26 +46,29 @@ export const NewEntry: React.FC<NewEntryProps> = ({ data, setData }) => {
         })
     }, [])
 
+    // Whenever we alter the autofill values
     React.useEffect(() => {
         if (autoFill.length === 0) return
-        const row = autoFill[0]
+        const autoFields = parseArrayToFields(autoFill[0], categories)
 
-        if (invalidRow(row)) {
+        if (autoFields === null) {
             setAutoFill([...autoFill.slice(1)])
             return
         }
 
-        let cti = { category: row[4] || '', type: row[5] || '', item: row[6] || '' }
-        if (cti.category === '' || cti.type === '' || cti.item === '') {
-            cti = guessCTI(row[2], parseFloat(row[1]))
+        let cti = autoFields.cti
+        if (cti === null) {
+            cti = guessCTI(autoFields.description, autoFields.amount)
         }
 
         setFields({
-            ...fields,
-            desc: row[2],
-            amount: row[1],
-            date: row[0].split('/').reverse().join('-'),
-            ...cti,
+            title: '',
+            date: autoFields.date,
+            amount: autoFields.amount.toFixed(2),
+            desc: autoFields.description,
+            category: cti.category,
+            type: cti.type,
+            item: cti.item,
         })
     }, [autoFill])
 
@@ -332,27 +336,8 @@ const EMPTY_FIELDS = {
     date: '',
 }
 
-const invalidRow = (row: string[]) => {
-    try {
-        if (row.length < 3) return true
-        if (!/\d{2}\/\d{2}\/\d{4}/.test(row[0])) return true
-        parseFloat(row[1])
-        if (row.length >= 5 && strToCatT(row[4]) === null) return true
-    } catch {
-        return true
-    }
-    return false
-}
-
-const strToCatT = (s: string): CategoryT | null => {
-    if (s === 'Income') return 'Income'
-    if (s === 'Expense') return 'Expense'
-    if (s === 'Investment') return 'Investment'
-    return null
-}
-
 const determineSelectItems = (categories: CTIT, key1?: string, key2: string = '') => {
-    const category = strToCatT(key1 || '')
+    const category = parseCategory(key1 || '')
     if (key1 && category !== null) {
         let obj = categories[category]
         if (key2 !== '') {
