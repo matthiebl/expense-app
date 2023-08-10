@@ -20,10 +20,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     return (
         <BasePage>
             <SearchModal data={data} open={modalOpen} setOpen={setModalOpen} search={search} setSearch={setSearch} />
-            <div className='flex h-full w-full gap-10 p-10'>
+            <div className='flex h-full w-full flex-col gap-10 p-10 xl:flex-row'>
                 <div className='flex h-full flex-grow flex-col gap-8'>
                     <h1 className='text-4xl'>Finances Dashboard</h1>
-                    <div className='flex gap-8'>
+
+                    <form className='xl:hidden' onSubmit={ev => ev.preventDefault()}>
+                        <Card className='flex gap-2 px-4 py-4'>
+                            <input
+                                type='text'
+                                placeholder='Search transactions'
+                                value={search}
+                                onChange={ev => setSearch(ev.target.value)}
+                                className='flex-grow rounded-3xl border border-transparent bg-transparent p-2 px-4 outline-0 focus:border-white focus:ring-0'
+                            />
+                            <IconButton icon={<SearchIcon />} onClick={() => setModalOpen(true)} className='p-2' />
+                        </Card>
+                    </form>
+
+                    <div className='flex flex-col gap-8 md:flex-row'>
                         <Card className='py-7'>
                             <p className='mb-3'>Income</p>
                             {incomeChange(data) === '' ? (
@@ -47,16 +61,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
                             )}
                         </Card>
                     </div>
-                    <IncomeExpenseGraph transactions={data} rule='flex xl:hidden' months={2} />
-                    <IncomeExpenseGraph transactions={data} rule='hidden xl:flex 2xl:hidden' months={3} />
+                    <IncomeExpenseGraph transactions={data} rule='flex hidden md:flex lg:hidden' months={2} />
+                    <IncomeExpenseGraph transactions={data} rule='hidden lg:flex 2xl:hidden' months={3} />
                     <IncomeExpenseGraph transactions={data} rule='hidden 2xl:flex 3xl:hidden' months={4} />
                     <IncomeExpenseGraph transactions={data} rule='hidden 3xl:flex 4xl:hidden' months={5} />
                     <IncomeExpenseGraph transactions={data} rule='hidden 4xl:flex 5xl:hidden' months={6} />
                     <IncomeExpenseGraph transactions={data} rule='hidden 5xl:flex' months={7} />
                 </div>
 
-                <div className='flex h-full w-80 flex-col gap-8'>
-                    <form onSubmit={ev => ev.preventDefault()}>
+                <div className='flex h-full w-full flex-col gap-8 xl:w-80'>
+                    <form className='hidden xl:block' onSubmit={ev => ev.preventDefault()}>
                         <Card className='flex gap-2 px-4 py-4'>
                             <input
                                 type='text'
@@ -71,6 +85,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
                     <Card className='flex-grow'></Card>
                     <Card></Card>
                     <Card className='flex-grow'></Card>
+                    <div className='min-h-[80px] xl:hidden' />
                 </div>
             </div>
         </BasePage>
@@ -243,7 +258,10 @@ interface IncomeExpenseGraphProps {
 }
 
 export const IncomeExpenseGraph: React.FC<IncomeExpenseGraphProps> = ({ transactions, rule = '', months = 3 }) => (
-    <Card className={'flex-grow gap-6 bg-gradient-to-br from-secondary-500 to-primary-900 ' + rule} background>
+    <Card
+        className={'min-h-[500px] flex-grow gap-6 bg-gradient-to-br from-secondary-500 to-primary-900 ' + rule}
+        background
+    >
         {getPreviousData(transactions, months).map(month => (
             <div key={crypto.randomUUID()} className='flex h-full w-full cursor-default flex-col items-center gap-3'>
                 <div className='flex w-full flex-grow items-end justify-center gap-2'>

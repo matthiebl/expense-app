@@ -47,7 +47,7 @@ const App = () => {
                         />
                     </>
                 )}
-                <Route path={'/test'} element={<Example />} />
+                {/* <Route path={'/test'} element={<Example />} /> */}
                 <Route path={Router.login.path} element={<UserAuth />} />
                 <Route path={Router.register.path} element={<UserAuth register />} />
                 <Route path='*' element={<Loading auth={authed} />} />

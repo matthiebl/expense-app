@@ -25,7 +25,7 @@ export const Navigation: React.FC<NavigationProps> = ({ open }) => {
     return (
         <div
             aria-expanded={open}
-            className='top-0 z-20 hidden h-screen w-screen shrink-0 flex-col overflow-hidden bg-gradient-to-br from-back-500 to-back-700 text-white shadow-2xl drop-shadow-2xl aria-expanded:sticky aria-expanded:flex sm:w-48 aria-expanded:sm:sticky lg:w-52 xl:w-56'
+            className='top-0 z-20 hidden h-screen w-screen shrink-0 flex-col overflow-hidden bg-gradient-to-br from-back-500 to-back-700 text-white shadow-2xl drop-shadow-2xl aria-expanded:sticky aria-expanded:flex sm:w-48 lg:w-52 xl:w-56'
         >
             <div className='flex h-48 min-h-[100px] w-full items-center justify-center rounded-b-2xl bg-gradient-to-br from-secondary-500 to-secondary-900 drop-shadow-2xl lg:h-52 xl:h-56'>
                 <Link to={Router.home.path}>
@@ -54,6 +54,7 @@ export const Navigation: React.FC<NavigationProps> = ({ open }) => {
                 <Button onClick={onSignOut} colour='bg-gradient-to-br from-back-500'>
                     Logout
                 </Button>
+                <div className='min-h-[20px]' />
             </nav>
         </div>
     )

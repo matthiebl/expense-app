@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigation } from '../components'
+import { LeftIcon, Navigation, RightIcon } from '../components'
 
 interface BasePageProps {
     hide?: boolean
@@ -16,9 +16,14 @@ export const BasePage: React.FC<BasePageProps> = ({ hide = false, content, child
             <main className='h-screen flex-grow overflow-hidden overflow-y-scroll bg-gradient-to-br from-back-500 to-back-900 text-white'>
                 {content || children}
             </main>
-            <button className='absolute bottom-0 left-0 z-50 rounded bg-white p-2' onClick={() => setOpen(!open)}>
-                Open/Close
-            </button>
+            {!hide && (
+                <button
+                    className='absolute bottom-6 left-6 z-50 flex justify-center rounded-3xl border border-white bg-gradient-to-br from-back-500 to-back-600 p-2 text-white'
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <LeftIcon /> : <RightIcon />}
+                </button>
+            )}
         </div>
     )
 }
