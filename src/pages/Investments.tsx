@@ -19,6 +19,7 @@ export const Investments: React.FC<InvestmentsProps> = ({ data }) => {
                     <h1 className='text-4xl'>{Router.invest.text}</h1>
                 </Box>
                 <DisplayTablePage loading={false} transactions={data} types={CTI.Investment} flipTableSign />
+                <div className='min-h-[80px]' />
             </div>
         </BasePage>
     )

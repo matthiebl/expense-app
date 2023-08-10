@@ -133,6 +133,7 @@ export const Summary: React.FC<SummaryProps> = ({ data }) => {
                             </Card>
                         ))}
                     </>
+                    <div className='min-h-[80px]' />
                 </div>
             </div>
         </BasePage>

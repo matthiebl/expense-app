@@ -19,6 +19,7 @@ export const Expenses: React.FC<ExpensesProps> = ({ data }) => {
                     <h1 className='text-4xl'>{Router.expenses.text}</h1>
                 </Box>
                 <DisplayTablePage loading={false} transactions={data} types={CTI.Expense} />
+                <div className='min-h-[80px]' />
             </div>
         </BasePage>
     )
