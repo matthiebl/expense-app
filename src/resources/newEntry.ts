@@ -1,4 +1,4 @@
-import { CTI, CTIT, CategoryT } from '.'
+import { CTIT, CategoryT } from '.'
 
 type Fields = {
     date: string
